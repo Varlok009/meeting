@@ -47,7 +47,8 @@ def profile(request, username):
             'page': page,
             'paginator': paginator,
             'count_posts': len(post_list)
-        })
+        }
+    )
 
 
 @login_required()

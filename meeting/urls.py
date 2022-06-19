@@ -18,10 +18,10 @@ from django.urls import include, path
 from django.contrib.flatpages import views
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('', include('posts.urls')),
     path('auth/', include('users.urls')),
     path('auth/', include("django.contrib.auth.urls")),
-    path('admin/', admin.site.urls),
     path('author/', views.flatpage, {'url': '/author/'}, name='author'),
     path('spec/', views.flatpage, {'url': '/spec/'}, name='spec'),
 ]
