@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
-from .models import Post, Group
-from .forms import PostForm
+from .models import Post, Group, Comment
+from .forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
@@ -54,7 +54,10 @@ def profile(request, username):
 @login_required()
 def post_view(request, username, post_id):
     post = get_object_or_404(Post, author__username=username, id=post_id)
-    return render(request, 'post.html', {'post': post})
+    comments = Comment.objects.filter(post=post)
+
+    form = CommentForm(request.POST or None)
+    return render(request, 'post.html', {'post': post, 'form': form, 'comments': comments})
 
 
 @login_required()
@@ -69,3 +72,14 @@ def post_edit(request, username, post_id):
     context = {'text': 'Редактировать'}
     return render(request, 'new_post.html', {'form': form, 'context': context, 'post': post})
 
+
+@login_required()
+def add_comment(request, username, post_id):
+    form = CommentForm(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.author = request.user
+        comment.post = get_object_or_404(Post, author__username=username, id=post_id)
+        comment.save()
+        return redirect('post', username, post_id)
+    return render(request, 'post.html', {'post': post, 'form': form, 'comments': comments})
