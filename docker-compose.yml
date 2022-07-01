@@ -2,9 +2,26 @@ version: '3'
 
 services:
   meeting:
+    platform: linux/amd64
     build: ./
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
       - '8000:8000'
+
+  meeting_db:
+    platform: linux/amd64
+    image: postgres
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+#    environment:
+#      POSTGRES_PASSWORD: postgres
+#      POSTGRES_USER: postgres
+#      POSTGRES_DB: meeting
+
+volumes:
+  postgres_data:
